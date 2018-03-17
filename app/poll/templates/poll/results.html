@@ -1,0 +1,5 @@
+{{ plot|safe }}
+
+{% if response %}
+<p>You answered: {{ response.choice.choice_text}}</p>
+{% endif %}

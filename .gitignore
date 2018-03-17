@@ -1,0 +1,9 @@
+# ignore log files
+*.log
+
+# ignore compiled python files
+*.py[cod]
+__pycache__/
+
+# ignore local sqlite dbs
+*.sqlite3
