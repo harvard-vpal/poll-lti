@@ -1,0 +1,4 @@
+# https://gist.github.com/kunanit/3feb20e8970e5a78151ca83ea4db87fc
+
+# ignore contents of this folder
+[^.]*

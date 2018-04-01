@@ -39,8 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'lti_provider',
-    'sslserver',
-
 ]
 
 MIDDLEWARE = [
@@ -84,10 +82,20 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'poll',
+        'USER': 'postgres',
+        'HOST': 'postgres',
+        'PASSWORD': 'postgres',
+        'PORT': 5432,
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 
 
 # Password validation
@@ -138,14 +146,11 @@ LTI_TOOL_CONFIGURATION = {
     'embed_icon_url': '<the icon url to use for an embed tool>' or '',
     'embed_tool_id': '<the embed tool id>' or '',
     'landing_url': '<the view landing page>',
-    'course_aware': True,
+    'course_aware': False,
     'course_navigation': False,
     'new_tab': False,
     'frame_width': 600,
     'frame_height': 800,
-    'assignments': {
-        'poll': '/poll/launch/',
-    }
 }
 
 LTI_EXTRA_PARAMETERS = ['question']
