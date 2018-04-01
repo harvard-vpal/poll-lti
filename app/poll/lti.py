@@ -1,25 +1,25 @@
 from django.contrib import messages
 from pylti.common import LTIPostMessageException, post_message
 import time
-import logging
+
 
 def message_identifier():
     return '{:.0f}'.format(time.time())
 
-def post_grade(score, request, lti):
-    logging.basicConfig()
-    logging.getLogger('pylti.common').setLevel(logging.DEBUG)
 
+def post_grade(score, request, lti):
+    """
+    Move LTI grade passback functionality from LTIPostGrade view to utility function for more flexibility
+    https://github.com/ccnmtl/django-lti-provider/blob/master/lti_provider/views.py#L156
+    """
 
     xml = lti.generate_request_xml(
         message_identifier(), 'replaceResult',
-        lti.lis_result_sourcedid(request), score, 'myurl')
+        lti.lis_result_sourcedid(request), score, None)
 
     if not post_message(
         lti.consumers(), lti.oauth_consumer_key(request),
             lti.lis_outcome_service_url(request), xml):
-
-        print(lti.lis_result_sourcedid(request))
 
         msg = ('An error occurred while saving your score. '
                'Please try again.')

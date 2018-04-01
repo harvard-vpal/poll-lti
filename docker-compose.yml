@@ -1,0 +1,27 @@
+version: '3'
+services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+
+  web:
+    container_name: web
+    build:
+      context: app
+      dockerfile: Dockerfile
+    command: sslserver
+    volumes:
+      - ./app:/app
+    ports:
+      - "8000:8000"
+    links:
+      - postgres
+
+volumes:
+  pgdata:
