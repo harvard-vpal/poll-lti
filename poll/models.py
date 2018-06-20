@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from ltiprovider.models import LtiUser
 
 
 class Question(models.Model):
@@ -18,6 +18,6 @@ class Choice(models.Model):
 
 
 class Response(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    lti_user = models.ForeignKey(LtiUser, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice = models.ForeignKey(Choice, on_delete=models.CASCADE)

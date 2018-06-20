@@ -15,7 +15,24 @@ from .models import LtiUser, LtiConsumer
 log = logging.getLogger(__name__)
 
 
-class LtiLaunchMixin(object):
+class LtiSessionMixin(object):
+    """
+    Mixin that enforces that user has an LTI session
+    LTI session is indicated by the existence of the 'LTI_SESSION' session key/value
+    """
+    @xframe_options_exempt
+    def dispatch(self, request, *args, **kwargs):
+        lti_session = request.session.get('LTI_SESSION')
+        if not lti_session:
+            log.error('LTI session is not found, Request cannot be processed')
+            raise PermissionDenied("Content is available only through LTI protocol.")
+        return super(LtiSessionMixin, self).dispatch(request, *args, **kwargs)
+
+    def get_lti_user(self, request):
+        return LtiUser.objects.get(pk=request.session['LTI_USER_PK'])
+
+
+class LtiLaunchMixin(LtiSessionMixin):
     """
     Mixin for LTI launch views
     Workflow:
@@ -30,33 +47,15 @@ class LtiLaunchMixin(object):
     def dispatch(self, request, *args, **kwargs):
         tool_provider = DjangoToolProvider.from_django_request(request=request)
         validate_lti_request(tool_provider)
-        get_or_create_lti_user(tool_provider)
+        lti_user, created = get_or_create_lti_user(tool_provider)
         store_lti_params_in_session(request.session, tool_provider)
-        add_lti_session_flag(request.session)
+        session['LTI_USER_PK'] = lti_user.pk
+        session['LTI_SESSION'] = True
         return super(LtiLaunchMixin, self).dispatch(request, *args, **kwargs)
 
 
-class LtiSessionMixin(object):
-    """
-    Mixin that enforces that user has an LTI session
-    LTI session is indicated by the existence of the 'LTI_SESSION' session key/value
-    """
-    @xframe_options_exempt
-    def dispatch(self, request, *args, **kwargs):
-        lti_session = request.session.get('LTI_SESSION')
-        if not lti_session:
-            log.error('LTI session is not found, Request cannot be processed')
-            raise PermissionDenied("Content is available only through LTI protocol.")
-        return super(LtiSessionMixin, self).dispatch(request, *args, **kwargs)
-
-
-def add_lti_session_flag(session):
-    """
-    Adds LTI_SESSION value to session to denote an LTI session
-    :param session:
-    :return:
-    """
-    session['LTI_SESSION'] = True
+def store_lti_user_pk_in_session(session, lti_user):
+    session['LTI_USER_PK'] = lti_user.pk
 
 
 def check_if_lti_session(request):
@@ -85,7 +84,7 @@ def validate_lti_request(tool_provider):
     An LTI launch is valid if:
     - The launch contains all the required parameters
     - The launch data is correctly signed using a known client key/secret pair
-    :param request:
+    :param tool_provider:
     :return: none
     """
     # if using reverse proxy, validate based on originating protocol

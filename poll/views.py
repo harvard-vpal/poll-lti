@@ -6,26 +6,28 @@ from .models import Question, Response, Choice
 from .plots import results_pie
 from ltiprovider.utils import update_lti_consumer_grade
 from ltiprovider.mixins import LtiLaunchMixin, LtiSessionMixin
+from ltiprovider.models import LtiUser
+
 
 # Create your views here.
 class IndexView(TemplateView):
     template_name = 'poll/hello.html'
 
 
-class LaunchView(LtiLaunchMixin, View):
-    def get(self, request, *args, **kwargs):
-        question = get_object_or_404(Question, pk=request.GET.get('question'))
-        response = Response.objects.filter(user=request.user, question=question).first()
-        if response:
-            return redirect('poll:results', pk=question.pk)
-        else:
-            return redirect('poll:question', pk=question.pk)
-
-
 class QuestionView(LtiLaunchMixin, DetailView):
     template_name = 'poll/question.html'
     form_class = QuestionForm
     model = Question
+
+    # TODO WIP
+    def post(self, request, *args, **kwargs):
+        question = self.object
+        lti_user = self.get_lti_user(request)
+        response = Response.objects.filter(lti_user=lti_user, question=question)
+        if response.exists():
+            return redirect('poll:results', pk=question.pk)
+
+        return self.get(request, *args, **kwargs)
 
     # TODO redirect to result page if learner has alrady answered the poll
 
