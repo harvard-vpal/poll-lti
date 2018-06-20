@@ -59,16 +59,19 @@ def validate_lti_request(request):
     :param request:
     :return: none
     """
+    tool_provider = DjangoToolProvider.from_django_request(request=request)
+
+    # if using reverse proxy, validate based on originating protocol
+    # by replacing http with https in the url used for validation
+    if request.META.get('HTTP_X_FORWARDED_PROTO') == 'https':
+        tool_provider.launch_url = tool_provider.launch_url.replace('http:', 'https:', 1)
+
+    validator = SignatureValidator()
     try:
-        tool_provider = DjangoToolProvider.from_django_request(request=request)
-        # validate based on originating protocol if using reverse proxy
-        if request.META.get('HTTP_X_FORWARDED_PROTO') == 'https':
-            tool_provider.launch_url = tool_provider.launch_url.replace('http:', 'https:', 1)
-        validator = SignatureValidator()
         is_valid_lti_request = tool_provider.is_valid_request(validator)
     except (oauth1.OAuth1Error, InvalidLTIRequestError, ValueError) as err:
         is_valid_lti_request = False
-        log.error('Error happened while LTI request: {}'.format(err.__str__()))
+        log.error('LTI request error: {}'.format(err.__str__()))
     if not is_valid_lti_request:
         raise Http404('LTI request is not valid')
 
