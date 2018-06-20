@@ -23,20 +23,6 @@ def infer_tool_consumer_instance_guid(request):
     return NotImplementedError
 
 
-def is_instructor(request):
-    """
-    Infer whether user is an instructor-like role based on provided role information
-    :param request:
-    :return: bool, True if instructor-like, False otherwise
-    """
-    roles = request.POST.get('roles')
-    if roles and set(roles.split(",")).intersection(['Instructor', 'Administrator']):
-        return True
-    else:
-        return False
-
-
-
 def update_lti_consumer_grade(consumer_key, consumer_secret, lis_outcome_service_url, lis_result_sourcedid, score):
     """
     Send lms grade for an lti component
