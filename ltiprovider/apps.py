@@ -5,4 +5,4 @@ from django.apps import AppConfig
 
 
 class LtiproviderConfig(AppConfig):
-    name = 'apps.ltiprovider'
+    name = 'ltiprovider'

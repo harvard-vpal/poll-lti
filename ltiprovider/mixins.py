@@ -8,8 +8,8 @@ from lti import InvalidLTIRequestError
 from lti.contrib.django import DjangoToolProvider
 from oauthlib import oauth1
 
-from ltiprovider.validator import SignatureValidator
-from ltiprovider.models import LtiUser, LtiConsumer
+from .validator import SignatureValidator
+from .models import LtiUser, LtiConsumer
 
 
 log = logging.getLogger(__name__)

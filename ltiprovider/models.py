@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.db.models import fields
 
-from apps.ltiprovider.utils import short_token
+from .utils import short_token
 
 
 class LtiConsumer(models.Model):

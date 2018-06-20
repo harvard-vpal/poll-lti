@@ -1,4 +1,5 @@
 import hashlib
+import logging
 
 from django.conf import settings
 import shortuuid
@@ -60,4 +61,4 @@ def update_lti_consumer_grade(consumer_key, consumer_secret, lis_outcome_service
     elif lms_response.has_warning():
         log.warning("Grade update response has warnings. {}, comment={}".format(args, 'processing'))
     else:
-        log.error("Grade update request failed. {}, comment={}".format(args, lms_response.code_major)
+        log.error("Grade update request failed. {}, comment={}".format(args, lms_response.code_major))

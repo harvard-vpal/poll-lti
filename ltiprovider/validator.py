@@ -8,7 +8,7 @@ from django.core.cache import cache
 from oauthlib.oauth1 import RequestValidator
 from oauthlib.oauth1 import SignatureOnlyEndpoint
 
-from apps.ltiprovider.models import LtiConsumer
+from .models import LtiConsumer
 
 log = logging.getLogger(__name__)
 
