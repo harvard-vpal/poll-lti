@@ -38,8 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'lti_provider',
     'sslserver',
+    'corsheaders',
+    'ltiprovider.apps.LtiproviderConfig',
+    'poll.apps.PollConfig',
 
 ]
 
@@ -50,12 +52,11 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 AUTHENTICATION_BACKENDS = [
   'django.contrib.auth.backends.ModelBackend',
-  'lti_provider.auth.LTIBackend',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -148,12 +149,12 @@ LTI_TOOL_CONFIGURATION = {
     }
 }
 
-LTI_EXTRA_PARAMETERS = ['question']
-
-PYLTI_CONFIG = {
-    'consumers': {
-        'key': {
-            'secret': 'secret'
-        }
-    }
-}
+# LTI_EXTRA_PARAMETERS = ['question']
+#
+# PYLTI_CONFIG = {
+#     'consumers': {
+#         'key': {
+#             'secret': 'secret'
+#         }
+#     }
+# }
