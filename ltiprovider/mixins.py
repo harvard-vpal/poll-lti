@@ -16,14 +16,14 @@ log = logging.getLogger(__name__)
 
 
 class LtiBaseMixin(object):
-    def get_lti_user(self, request):
-        return LtiUser.objects.get(pk=request.session['LTI_USER_PK'])
+    def get_lti_user(self):
+        return LtiUser.objects.get(pk=self.request.session['LTI_USER_PK'])
 
     def dispatch(self, request, *args, **kwargs):
         return super(LtiBaseMixin, self).dispatch(request, *args, **kwargs)
 
 
-class LtiSessionMixin(object):
+class LtiSessionMixin(LtiBaseMixin):
     """
     Mixin that enforces that user has an LTI session
     LTI session is indicated by the existence of the 'LTI_SESSION' session key/value
@@ -36,11 +36,8 @@ class LtiSessionMixin(object):
             raise PermissionDenied("Content is available only through LTI protocol.")
         return super(LtiSessionMixin, self).dispatch(request, *args, **kwargs)
 
-    def get_lti_user(self, request):
-        return LtiUser.objects.get(pk=request.session['LTI_USER_PK'])
 
-
-class LtiLaunchMixin(object):
+class LtiLaunchMixin(LtiBaseMixin):
     """
     Mixin for LTI launch views
     Workflow:
@@ -59,8 +56,8 @@ class LtiLaunchMixin(object):
         initialize_lti_session(request, tool_provider, lti_user)
         return super(LtiLaunchMixin, self).dispatch(request, *args, **kwargs)
 
-    def get_lti_user(self, request):
-        return LtiUser.objects.get(pk=request.session['LTI_USER_PK'])
+    def get_lti_user(self):
+        return LtiUser.objects.get(pk=self.request.session['LTI_USER_PK'])
 
 
 def initialize_lti_session(request, tool_provider, lti_user):

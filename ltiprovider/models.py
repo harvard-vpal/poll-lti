@@ -1,10 +1,18 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import hashlib
+from django.conf import settings
 from django.db import models
 from django.db.models import fields
+import shortuuid
 
-from .utils import short_token
+
+def short_token():
+    """Generate a 20-character random token"""
+    hash = hashlib.sha1(shortuuid.uuid().encode('utf-8'))
+    hash.update(settings.SECRET_KEY.encode('utf-8'))
+    return hash.hexdigest()[::2]
 
 
 class LtiConsumer(models.Model):
