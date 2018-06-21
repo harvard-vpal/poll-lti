@@ -6,7 +6,6 @@ from .models import Question, Response, Choice
 from .plots import results_pie
 from ltiprovider.utils import update_lti_consumer_grade
 from ltiprovider.mixins import LtiLaunchMixin, LtiSessionMixin
-from ltiprovider.models import LtiUser
 
 
 # Create your views here.
@@ -19,30 +18,29 @@ class QuestionView(LtiLaunchMixin, DetailView):
     form_class = QuestionForm
     model = Question
 
-    # TODO WIP
     def post(self, request, *args, **kwargs):
-        question = self.object
+        question = self.get_object()
         lti_user = self.get_lti_user(request)
         response = Response.objects.filter(lti_user=lti_user, question=question)
+        # Redirect to result page if learner has alrady answered the poll
         if response.exists():
             return redirect('poll:results', pk=question.pk)
 
         return self.get(request, *args, **kwargs)
 
-    # TODO redirect to result page if learner has alrady answered the poll
+    def get_context_data(self, **kwargs):
+        """
+        Inject the form object into the view context
+        """
+        context = super().get_context_data(**kwargs)
+        context['form'] = self.form_class(self.object)  # self.object is the question model instance
+        return context
 
-    # def get(self):
-    #     """
-    #
-    #     :return:
-    #     """
-    # question = get_object_or_404(Question, pk=request.GET.get('question'))
-    # response = Response.objects.filter(user=request.user, question=question).first()
-    # if response:
-    #     return redirect('poll:results', pk=question.pk)
-    # else:
-    #     return redirect('poll:question', pk=question.pk)
 
+class QuestionTestView(DetailView):
+    template_name = 'poll/question.html'
+    form_class = QuestionForm
+    model = Question
 
     def get_context_data(self, **kwargs):
         """

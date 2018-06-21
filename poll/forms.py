@@ -1,6 +1,10 @@
 from django import forms
 
+
 class QuestionForm(forms.Form):
+    """
+    Input form for the poll question
+    """
     choice = forms.ModelChoiceField(
         queryset=None,  # set queryset in init
         widget=forms.RadioSelect,   # radio select buttons instead of drop down select
