@@ -45,15 +45,12 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
-
-AUTHENTICATION_BACKENDS = [
-  'django.contrib.auth.backends.ModelBackend',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -80,12 +77,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 
 
 # Password validation
@@ -128,23 +125,23 @@ STATIC_URL = '/static/'
 
 #### lti settings ####
 
-LTI_TOOL_CONFIGURATION = {
-    'title': 'Polls',
-    'description': 'Polls LTI app',
-    'launch_url': 'lti/',
-    'embed_url': '<the view endpoint for an embed tool>' or '',
-    'embed_icon_url': '<the icon url to use for an embed tool>' or '',
-    'embed_tool_id': '<the embed tool id>' or '',
-    'landing_url': '<the view landing page>',
-    'course_aware': True,
-    'course_navigation': False,
-    'new_tab': False,
-    'frame_width': 600,
-    'frame_height': 800,
-    'assignments': {
-        'poll': '/poll/launch/',
-    }
-}
+# LTI_TOOL_CONFIGURATION = {
+#     'title': 'Polls',
+#     'description': 'Polls LTI app',
+#     'launch_url': 'lti/',
+#     'embed_url': '<the view endpoint for an embed tool>' or '',
+#     'embed_icon_url': '<the icon url to use for an embed tool>' or '',
+#     'embed_tool_id': '<the embed tool id>' or '',
+#     'landing_url': '<the view landing page>',
+#     'course_aware': True,
+#     'course_navigation': False,
+#     'new_tab': False,
+#     'frame_width': 600,
+#     'frame_height': 800,
+#     'assignments': {
+#         'poll': '/poll/launch/',
+#     }
+# }
 
 # LTI_EXTRA_PARAMETERS = ['question']
 #
