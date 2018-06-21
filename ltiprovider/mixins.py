@@ -66,7 +66,7 @@ class LtiLaunchMixin(object):
 def initialize_lti_session(request, tool_provider, lti_user):
     # store all LTI params in session
     for prop, value in tool_provider.to_params().items():
-        session[prop] = value
+        request.session[prop] = value
     # store pk of lti_user for easy retrieval of object later
     request.session['LTI_USER_PK'] = lti_user.pk
     # create flag indicating existence of LTI user session
