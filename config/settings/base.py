@@ -77,13 +77,6 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -122,33 +115,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
-#### lti settings ####
-
-# LTI_TOOL_CONFIGURATION = {
-#     'title': 'Polls',
-#     'description': 'Polls LTI app',
-#     'launch_url': 'lti/',
-#     'embed_url': '<the view endpoint for an embed tool>' or '',
-#     'embed_icon_url': '<the icon url to use for an embed tool>' or '',
-#     'embed_tool_id': '<the embed tool id>' or '',
-#     'landing_url': '<the view landing page>',
-#     'course_aware': True,
-#     'course_navigation': False,
-#     'new_tab': False,
-#     'frame_width': 600,
-#     'frame_height': 800,
-#     'assignments': {
-#         'poll': '/poll/launch/',
-#     }
-# }
-
-# LTI_EXTRA_PARAMETERS = ['question']
-#
-# PYLTI_CONFIG = {
-#     'consumers': {
-#         'key': {
-#             'secret': 'secret'
-#         }
-#     }
-# }
