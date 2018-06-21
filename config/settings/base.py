@@ -31,29 +31,26 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'poll.apps.PollConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'lti_provider',
+    'corsheaders',
+    'poll.apps.PollConfig',
+    'ltiprovider.apps.LtiproviderConfig',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
-
-AUTHENTICATION_BACKENDS = [
-  'django.contrib.auth.backends.ModelBackend',
-  'lti_provider.auth.LTIBackend',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -79,23 +76,6 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'poll',
-        'USER': 'postgres',
-        'HOST': 'postgres',
-        'PASSWORD': 'postgres',
-        'PORT': 5432,
-    }
-}
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
 
 
 # Password validation
@@ -135,30 +115,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
-#### lti settings ####
-
-LTI_TOOL_CONFIGURATION = {
-    'title': 'Polls',
-    'description': 'Polls LTI app',
-    'launch_url': 'lti/',
-    'embed_url': '<the view endpoint for an embed tool>' or '',
-    'embed_icon_url': '<the icon url to use for an embed tool>' or '',
-    'embed_tool_id': '<the embed tool id>' or '',
-    'landing_url': '<the view landing page>',
-    'course_aware': False,
-    'course_navigation': False,
-    'new_tab': False,
-    'frame_width': 600,
-    'frame_height': 800,
-}
-
-LTI_EXTRA_PARAMETERS = ['question']
-
-PYLTI_CONFIG = {
-    'consumers': {
-        'key': {
-            'secret': 'secret'
-        }
-    }
-}

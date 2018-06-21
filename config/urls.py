@@ -19,7 +19,6 @@ from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('lti/', include('lti_provider.urls')),
     path('poll/', include('poll.urls')),
     path('health/', views.health),
 ]

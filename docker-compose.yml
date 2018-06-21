@@ -1,7 +1,8 @@
-version: '3'
+# docker-compose file for local development
+
+version: '2'
 services:
   postgres:
-    container_name: postgres
     image: postgres
     environment:
       POSTGRES_PASSWORD: postgres
@@ -9,15 +10,13 @@ services:
       - pgdata:/var/lib/postgresql/data/
     ports:
       - "5432:5432"
-
   web:
-    container_name: web
     build:
-      context: app
+      context: .
       dockerfile: Dockerfile
-    command: sslserver
+    command: bash -c "sleep 5 && python manage.py runsslserver 0.0.0.0:8000"
     volumes:
-      - ./app:/app
+      - .:/app
     ports:
       - "8000:8000"
     links:
