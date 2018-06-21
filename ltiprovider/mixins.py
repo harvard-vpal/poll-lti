@@ -15,6 +15,14 @@ from .models import LtiUser, LtiConsumer
 log = logging.getLogger(__name__)
 
 
+class LtiBaseMixin(object):
+    def get_lti_user(self, request):
+        return LtiUser.objects.get(pk=request.session['LTI_USER_PK'])
+
+    def dispatch(self, request, *args, **kwargs):
+        return super(LtiBaseMixin, self).dispatch(request, *args, **kwargs)
+
+
 class LtiSessionMixin(object):
     """
     Mixin that enforces that user has an LTI session
@@ -32,7 +40,7 @@ class LtiSessionMixin(object):
         return LtiUser.objects.get(pk=request.session['LTI_USER_PK'])
 
 
-class LtiLaunchMixin(LtiSessionMixin):
+class LtiLaunchMixin(object):
     """
     Mixin for LTI launch views
     Workflow:
@@ -48,14 +56,21 @@ class LtiLaunchMixin(LtiSessionMixin):
         tool_provider = DjangoToolProvider.from_django_request(request=request)
         validate_lti_request(tool_provider)
         lti_user, created = get_or_create_lti_user(tool_provider)
-        store_lti_params_in_session(request.session, tool_provider)
-        session['LTI_USER_PK'] = lti_user.pk
-        session['LTI_SESSION'] = True
+        initialize_lti_session(request, tool_provider, lti_user)
         return super(LtiLaunchMixin, self).dispatch(request, *args, **kwargs)
 
+    def get_lti_user(self, request):
+        return LtiUser.objects.get(pk=request.session['LTI_USER_PK'])
 
-def store_lti_user_pk_in_session(session, lti_user):
-    session['LTI_USER_PK'] = lti_user.pk
+
+def initialize_lti_session(request, tool_provider, lti_user):
+    # store all LTI params in session
+    for prop, value in tool_provider.to_params().items():
+        session[prop] = value
+    # store pk of lti_user for easy retrieval of object later
+    request.session['LTI_USER_PK'] = lti_user.pk
+    # create flag indicating existence of LTI user session
+    request.session['LTI_SESSION'] = True
 
 
 def check_if_lti_session(request):
@@ -65,17 +80,6 @@ def check_if_lti_session(request):
     :return:
     """
     return request.session.get('LTI_SESSION', False)
-
-
-def store_lti_params_in_session(session, tool_provider):
-    """
-    Store LTI launch params in request session
-    :param session: django request.session
-    :param tool_provider: lti tool_provider object to get params from
-    :return:
-    """
-    for prop, value in tool_provider.to_params().items():
-        session[prop] = value
 
 
 def validate_lti_request(tool_provider):
@@ -93,11 +97,12 @@ def validate_lti_request(tool_provider):
         tool_provider.launch_url = tool_provider.launch_url.replace('http:', 'https:', 1)
 
     validator = SignatureValidator()
+
     try:
         is_valid_lti_request = tool_provider.is_valid_request(validator)
     except (oauth1.OAuth1Error, InvalidLTIRequestError, ValueError) as err:
         is_valid_lti_request = False
-        log.error('LTI request error: {}'.format(err.__str__()))
+        log.error('Error occurred during LTI request verification: {}'.format(err.__str__()))
     if not is_valid_lti_request:
         raise Http404('LTI request is not valid')
 
