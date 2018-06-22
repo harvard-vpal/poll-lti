@@ -3,7 +3,7 @@ from ltiprovider.models import LtiUser
 
 
 class Question(models.Model):
-    question_text = models.TextField(max_length=200)
+    question_text = models.TextField()
 
     def __str__(self):
         return self.question_text
