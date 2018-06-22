@@ -12,7 +12,7 @@ def results_pie(question, **kwargs):
     # create plotly graph
     trace = go.Pie(labels=choice_text, values=votes)
     data = go.Data([trace])
-    layout = go.Layout(title=question.question_text)
+    layout = go.Layout()
     figure = go.Figure(data=data,layout=layout)
     config = dict(
         displayModeBar=False,  # hide floating options toolbar

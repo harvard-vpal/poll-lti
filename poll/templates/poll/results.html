@@ -1,5 +1,15 @@
-{{ plot|safe }}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'poll/css/results.css' %}" />
+
+<div id="question_text">
+    <h3 id="question_text">{{ question.question_text }}</h3>
+</div>
+<div>
+    {{ plot|safe }}
+</div>
 
 {% if response %}
-<p>You answered: {{ response.choice.choice_text}}</p>
+<div>
+    <p>You answered: {{ response.choice.choice_text}}</p>
+</div>
 {% endif %}
