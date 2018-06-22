@@ -1,8 +1,6 @@
-/* results page css */
+/* question page css */
 
-div {
+label, li{
     font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 16px;
-    text-align: center;
 }
-
