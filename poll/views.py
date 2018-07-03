@@ -23,11 +23,9 @@ class QuestionView(LtiMixin, DetailView):
     model = Question
 
     def get(self, request, *args, **kwargs):
-        log.debug({k: v for k, v in request.session.items()})
         question = self.get_object()
         lti_user = self.get_lti_user()
         response = Response.objects.filter(lti_user=lti_user, question=question)
-        log.debug("response qs: {}".format(response))
         # Redirect to result page if learner has already answered the poll
         if response.exists():
             return redirect('poll:results', request, pk=question.pk)
@@ -64,8 +62,6 @@ class VoteView(LtiMixin, DetailView):
     def post(self, request, *args, **kwargs):
         question = self.get_object()
         form = self.form_class(question, request.POST)
-        log.debug("Vote view session variables:")
-        log.debug({k: v for k, v in request.session.items()})
         if form.is_valid():
             # pass back grade to lti consumer if gradable
             if self.is_graded():
