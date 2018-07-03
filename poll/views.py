@@ -1,10 +1,9 @@
 import logging
-from django.shortcuts import redirect
 from django.views.generic.base import TemplateView
 from django.views.generic import DetailView
 
-from ltiprovider.outcomes import update_grade
-from ltiprovider.mixins import LtiLaunchMixin, LtiSessionMixin
+from ltiprovider.mixins import LtiMixin
+from ltiprovider.shortcuts import session_redirect as redirect
 
 from .forms import QuestionForm
 from .models import Question, Response
@@ -18,21 +17,22 @@ class IndexView(TemplateView):
     template_name = 'poll/hello.html'
 
 
-class QuestionView(LtiLaunchMixin, DetailView):
+class QuestionView(LtiMixin, DetailView):
     template_name = 'poll/question.html'
     form_class = QuestionForm
     model = Question
 
-    def post(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
+        log.debug({k: v for k, v in request.session.items()})
         question = self.get_object()
         lti_user = self.get_lti_user()
-        log.debug({k: v for k, v in request.session.items()})
         response = Response.objects.filter(lti_user=lti_user, question=question)
+        log.debug("response qs: {}".format(response))
         # Redirect to result page if learner has already answered the poll
         if response.exists():
-            return redirect('poll:results', pk=question.pk)
+            return redirect('poll:results', request, pk=question.pk)
 
-        return self.get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         """
@@ -57,18 +57,20 @@ class QuestionTestView(DetailView):
         return context
 
 
-class VoteView(LtiSessionMixin, DetailView):
+class VoteView(LtiMixin, DetailView):
     model = Question
     form_class = QuestionForm
 
     def post(self, request, *args, **kwargs):
         question = self.get_object()
         form = self.form_class(question, request.POST)
+        log.debug("Vote view session variables:")
         log.debug({k: v for k, v in request.session.items()})
         if form.is_valid():
-            # pass back grade to lti consumer
-            score = 1.0  # score to pass back
-            update_grade(request.session, score)
+            # pass back grade to lti consumer if gradable
+            if self.is_graded():
+                score = 1.0  # score to pass back
+                self.update_grade(score)
 
             # process form cleaned data
             Response.objects.create(
@@ -76,10 +78,10 @@ class VoteView(LtiSessionMixin, DetailView):
                 question=question,
                 choice=form.cleaned_data['choice']
             )
-            return redirect('poll:results', question.id)
+            return redirect('poll:results', request, pk=question.pk)
 
 
-class ResultsView(LtiSessionMixin, DetailView):
+class ResultsView(LtiMixin, DetailView):
     model = Question
     template_name = 'poll/results.html'
 
