@@ -1,3 +1,4 @@
+import logging
 from django.shortcuts import redirect
 from django.views.generic.base import TemplateView
 from django.views.generic import DetailView
@@ -8,6 +9,9 @@ from ltiprovider.mixins import LtiLaunchMixin, LtiSessionMixin
 from .forms import QuestionForm
 from .models import Question, Response
 from .plots import results_pie
+
+
+log = logging.getLogger(__name__)
 
 
 class IndexView(TemplateView):
@@ -22,8 +26,9 @@ class QuestionView(LtiLaunchMixin, DetailView):
     def post(self, request, *args, **kwargs):
         question = self.get_object()
         lti_user = self.get_lti_user()
+        log.debug({k: v for k, v in request.session.items()})
         response = Response.objects.filter(lti_user=lti_user, question=question)
-        # Redirect to result page if learner has alrady answered the poll
+        # Redirect to result page if learner has already answered the poll
         if response.exists():
             return redirect('poll:results', pk=question.pk)
 
@@ -59,6 +64,7 @@ class VoteView(LtiSessionMixin, DetailView):
     def post(self, request, *args, **kwargs):
         question = self.get_object()
         form = self.form_class(question, request.POST)
+        log.debug({k: v for k, v in request.session.items()})
         if form.is_valid():
             # pass back grade to lti consumer
             score = 1.0  # score to pass back
