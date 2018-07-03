@@ -56,9 +56,6 @@ class LtiLaunchMixin(LtiBaseMixin):
         initialize_lti_session(request, tool_provider, lti_user)
         return super(LtiLaunchMixin, self).dispatch(request, *args, **kwargs)
 
-    def get_lti_user(self):
-        return LtiUser.objects.get(pk=self.request.session['LTI_USER_PK'])
-
 
 def initialize_lti_session(request, tool_provider, lti_user):
     # store all LTI params in session
