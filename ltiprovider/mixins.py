@@ -97,8 +97,8 @@ def get_session_key(request):
     :param request: django request object
     :return: str, session key
     """
-    log.debug("Referring url: {}".format(request.META['HTTP_REFERER']))
-    referring_url_params = parse_qs(urlparse(request.META['HTTP_REFERER']).query)
+    log.debug("Referring url: {}".format(request.META.get('HTTP_REFERER')))
+    referring_url_params = parse_qs(urlparse(request.META.get('HTTP_REFERER')).query)
     if request.session.session_key:
         return request.session.session_key
     elif 'session' in request.GET:
@@ -108,8 +108,7 @@ def get_session_key(request):
     # check if session is a query param in referring url
     elif 'session' in referring_url_params:
         log.debug("Getting session key from referring url")
-        if 'session' in referring_url_params:
-            return referring_url_params['session'][0]
+        return referring_url_params['session'][0]
     else:
         raise Http404('Session key not found')
 
