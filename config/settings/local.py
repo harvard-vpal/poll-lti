@@ -33,8 +33,6 @@ INSTALLED_APPS += [
 # You may want to explicitly specify allowed origin hostnames in production with CORS_ORIGIN_WHITELIST.
 CORS_ORIGIN_ALLOW_ALL = True
 
-X_FRAME_OPTIONS = 'ALLOWALL'
-
 # Logging settings
 LOGGING = {
     'version': 1,
